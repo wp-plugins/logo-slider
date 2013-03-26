@@ -12,7 +12,7 @@ Showcase logos in stylish slideshow carousel.
 
 == Description ==
 
-Add a logo slideshow carousel to your site quickly and easily. Embed in any post/page using shortcode `[logo-slider]` or in your theme with `logo_slider();`
+Add a logo slideshow carousel to your site quickly and easily. Embed in any post/page using shortcode `[logo-slider]` or in your theme with `<?php logo_slider(); ?>`
 
 Perfect for displaying a list of sponsor or client logos.
 
@@ -32,7 +32,7 @@ Perfect for displaying a list of sponsor or client logos.
 1. Upload the `logo-slider` folder to the `/wp-content/plugins/` directory
 1. Activate Logo Slider plugin through the 'Plugins' menu in WordPress
 1. Configure the plugin by going to the `Logo Slider` tab that appears in your admin menu.
-1. Add to any page using shortcode `[logo-slider]` or to your theme using `logo_slider();`
+1. Add to any page using shortcode `[logo-slider]` or to your theme using `<?php logo_slider(); ?>`
  
 == Frequently Asked Questions ==
 
