@@ -22,6 +22,7 @@ Perfect for displaying a list of sponsor or client logos.
 *	Easy to customise (height, width, number of images before slide etc)
 *	Easy image uploader
 *	Ability to add links to each logo if you want
+*	Auto-slide option
 
 = Demo =
 
@@ -55,10 +56,16 @@ If you've tried all the obvious stuff and it's still not working please request 
 
 == Changelog ==
 
+= 1.1 =
+* Added auto-slide options
+
 = 1.0 =
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.1 =
+* Added auto-slide options
 
 = 1.0 =
 * Initial release

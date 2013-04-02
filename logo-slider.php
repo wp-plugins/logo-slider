@@ -2,8 +2,8 @@
 /*
 Plugin Name: Logo Slider
 Plugin URI: http://www.wordpress.org/extend/plugins/logo-slider
-Description:  Add a logo slideshow carousel to your site quicky and easily. Embedd in any post/page using shortcode <code>[logo-slider]</code> or to your theme with <code>logo_slider();</code>
-Version: 1.0
+Description:  Add a logo slideshow carousel to your site quicky and easily. Embedd in any post/page using shortcode <code>[logo-slider]</code> or to your theme with <code><?php logo_slider(); ?></code>
+Version: 1.1
 Author: Enigma Digital
 Author URI: http://www.enigmaweb.com.au/
 */
@@ -24,6 +24,8 @@ $wp_logo_defaults = apply_filters('wp_logo_defaults', array(
 	'slider_width' => 450,
 	'slider_height' => 198,
 	'num_img' => 2,
+	'auto_slide' => 1,
+	'auto_slide_time' => '',
 	
 ));
 
@@ -309,14 +311,26 @@ function wp_logo_settings_admin() { ?>
 	<?php global $wp_logo_slider_settings; $options = $wp_logo_slider_settings; ?>
 	<table class="form-table">
 		<tr><th scope="row">Size</th>
-		<td>Width: <input type="text" name="wp_logo_slider_settings[slider_width]" value="<?php echo $options['slider_width'] ?>" size="4" /> Height: <input type="text" name="wp_logo_slider_settings[slider_height]" value="<?php echo $options['slider_height'] ?>" size="4" />
+		<td>Width: <input type="text" name="wp_logo_slider_settings[slider_width]" value="<?php echo $options['slider_width'] ?>" size="4" /> Height: <input type="text" name="wp_logo_slider_settings[slider_height]" value="<?php echo $options['slider_height'] ?>" size="4" /></td></tr>
 			
 		<tr><th scope="row">Images Per Slide</th>
-		<td><input type="text" name="wp_logo_slider_settings[num_img]" value="<?php echo $options['num_img'] ?>" size="4" /> <small>How many logos to slide through when user clicks an arrow</small></td>
+		<td><input type="text" name="wp_logo_slider_settings[num_img]" value="<?php echo $options['num_img'] ?>" size="4" /> <small>Number of logos per slide</small></td>
         </tr>
+        
 		<tr><th scope="row">Background Colour</th>
 		<td><input type="text" name="wp_logo_slider_settings[bgcolour]" value="<?php echo $options['bgcolour'] ?>" /> <small>Format: #FFFFFF</small></td>
         </tr>
+        <tr><th scope="row">Auto Slide</th>
+		<td id="arrow-style"> 
+            	
+                ON <input type="radio" name="wp_logo_slider_settings[auto_slide]" value="1" <?php if($options['auto_slide']==1){echo 'checked="checked"';}?> />&nbsp; &nbsp;
+                OFF <input type="radio" name="wp_logo_slider_settings[auto_slide]" value="2" <?php if($options['auto_slide']==2){echo 'checked="checked"';}?>/>
+                </td>
+                </tr>
+                <tr><th scope="row">Auto Slide Time</th>
+		<td><input type="text" name="wp_logo_slider_settings[auto_slide_time]" value="<?php echo $options['auto_slide_time'] ?>" size="4" /> <small>Set auto slide duration in seconds</small></td>
+        </tr>
+       
         <tr><th scope="row">Arrow Style</th>
 		<td id="arrow-style"> 
             	
@@ -371,6 +385,8 @@ function wp_logo_settings_validate($input) {
 	$input['arrow'] = intval($input['arrow']);
 	$input['custom_css'] = wp_filter_nohtml_kses($input['custom_css']);
 	$input['bgcolour'] = wp_filter_nohtml_kses($input['bgcolour']);
+	$input['auto_slide'] = intval($input['auto_slide']);
+	$input['auto_slide_time'] = intval($input['auto_slide_time']);
 	
 	return $input;
 }
@@ -451,7 +467,7 @@ function wp_slider_args() {
 <script type="text/javascript">
 jQuery(document).ready(function($) {
 	$('#logo-slider').before('<div class="slider-controls"><a href="#" id="prev">&lt;</a> <a href="#" id="next">&gt;</a></div>').cycle({ 
-    timeout: 0,
+    timeout: <?php if($wp_logo_slider_settings['auto_slide'] == 1) {echo $wp_logo_slider_settings['auto_slide_time'] * 1000;} else { echo 0;} ?>,
 	fx:      'scrollHorz',
 	next:   '#prev',
 	prev:   '#next',
@@ -519,4 +535,5 @@ function admin_styles(){ ?>
 		<style type="text/css" media="screen">
 			#arrow-style p{ float:left; height:60px; width:40px; text-align:center; margin-right:16px;}
 		</style>
-<?php }
+<?php } 
+
