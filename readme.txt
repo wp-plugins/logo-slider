@@ -37,6 +37,14 @@ Perfect for displaying a list of sponsor or client logos.
  
 == Frequently Asked Questions ==
 
+= How can I use this in a widget? =
+
+Just place the shortcode into a text widget. If that doesn't work (it just renders [logo-slider] in text) then that means your theme isn't 'widgetized' which you can fix easily by adding 1 tiny piece of code to your theme functions.php:
+
+`add_filter('widget_text', 'do_shortcode');`
+
+Add this code above to fuctions.php between the <?php and ?> tags. A good place would be either at the very top or the very bottom of the file. Once you've done this you should be able to use shortcode in widgets now.
+
 = How can I customise the design? =
 
 You can do some basic presentation adjustments via Logo Slider tab on the admin menu. Beyond this, you can completely customise the design using CSS in the Custom CSS field on settings screen.
