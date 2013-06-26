@@ -43,7 +43,7 @@ Just place the shortcode into a text widget. If that doesn't work (it just rende
 
 `add_filter('widget_text', 'do_shortcode');`
 
-Add this code above to fuctions.php between the <?php and ?> tags. A good place would be either at the very top or the very bottom of the file. Once you've done this you should be able to use shortcode in widgets now.
+Add this code above to fuctions.php between the `<?php` and `?>` tags. A good place would be either at the very top or the very bottom of the file. Once you've done this you should be able to use shortcode in widgets now.
 
 = How can I customise the design? =
 
