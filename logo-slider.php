@@ -3,7 +3,7 @@
 Plugin Name: Logo Slider
 Plugin URI: http://www.wordpress.org/extend/plugins/logo-slider
 Description:  Add a logo slideshow carousel to your site quicky and easily. Embedd in any post/page using shortcode <code>[logo-slider]</code> or to your theme with <code><?php logo_slider(); ?></code>
-Version: 1.1
+Version: 1.2
 Author: Enigma Digital
 Author URI: http://www.enigmaweb.com.au/
 */
@@ -134,22 +134,24 @@ function wp_logo_handle_upload() {
 		return;
 	}
 	
-	/*//	if the image doesn't meet the minimum width/height requirements ...
-	if($width < $wp_logo_slider_settings['slider_width'] || $height < $wp_logo_slider_settings['slider_height']) {
-		unlink($file); // delete the image
-		echo '<div class="error" id="message"><p>Sorry, but this image does not meet the minimum height/width requirements. Please upload another image</p></div>';
-		return;
-	}*/
-	
 	//	if the image is larger than the width/height requirements, then scale it down.
 	if($width > $wp_logo_slider_settings['slider_width'] || $height > $wp_logo_slider_settings['slider_height']) {
 		//	resize the image
-		$resized = image_resize($file, $wp_logo_slider_settings['slider_width'], $wp_logo_slider_settings['slider_height'], true, 'resized');
-		$resized_url = $upload_dir_url . basename($resized);
-		//	delete the original
-		unlink($file);
-		$file = $resized;
-		$url = $resized_url;
+		 
+		$width = $wp_logo_slider_settings['slider_width'];
+		$height = $wp_logo_slider_settings['slider_height'];
+		$image = wp_get_image_editor($file);
+		if(is_wp_error($image)){
+			return $image;
+		}
+		$resized = $image->resize($width, $height, TRUE);
+		$destFile = $image->generate_filename(NULL, NULL);
+		$saved = $image->save($destFile);
+		
+		if(is_wp_error($saved)){
+			return $saved;
+		}
+		$newImgPath = $destFile;
 	}
 	
 	//	make the thumbnail
@@ -158,6 +160,8 @@ function wp_logo_handle_upload() {
 		$thumbnail = image_resize($file, 100, $thumb_height, true, 'thumb');
 		$thumbnail_url = $upload_dir_url . basename($thumbnail);
 	}
+	
+    
 	
 	//	use the timestamp as the array key and id
 	$time = date('YmdHis');
@@ -284,7 +288,7 @@ function wp_logo_images_admin() { ?>
 				<input type="hidden" name="wp_logo_slider_images[<?php echo $image; ?>][id]" value="<?php echo $data['id']; ?>" />
 				<input type="hidden" name="wp_logo_slider_images[<?php echo $image; ?>][file]" value="<?php echo $data['file']; ?>" />
 				<input type="hidden" name="wp_logo_slider_images[<?php echo $image; ?>][file_url]" value="<?php echo $data['file_url']; ?>" />
-				<input type="hidden" name="wp_logo_slider_images[<?php echo $image; ?>][thumbnail]" value="<?php echo $data['thumbnail']; ?>" />
+				<input type="hidden" name="wp_logo_slider_images[<?php echo $image; ?>][thumbnail]" value="<?php //echo $data['thumbnail']; ?>" />
 				<input type="hidden" name="wp_logo_slider_images[<?php echo $image; ?>][thumbnail_url]" value="<?php echo $data['thumbnail_url']; ?>" />
 				<th scope="row" class="column-slug"><img src="<?php echo $data['thumbnail_url']; ?>" /></th>
                 <td><input type="text" name="wp_logo_slider_images[<?php echo $image; ?>][image_links_to]" value="<?php echo $data['image_links_to']; ?>" size="30" /></td>
