@@ -64,6 +64,9 @@ If you've tried all the obvious stuff and it's still not working please request 
 
 == Changelog ==
 
+= 1.3 =
+* Fixed background colour setting
+
 = 1.2 =
 * Bug fix for configuration menu display and image resize function. Thanks to Grant Kimball for this fix.
 
@@ -74,6 +77,9 @@ If you've tried all the obvious stuff and it's still not working please request 
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.3 =
+* Fixed background colour setting
 
 = 1.2 =
 * Bug fix for configuration menu display and image resize function. Thanks to Grant Kimball for this fix.
