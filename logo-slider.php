@@ -271,7 +271,7 @@ function wp_logo_images_admin() { ?>
 	</table><br />
 	
 	<p style="border:2px solid #999; border-radius: 10px; font-size: 12px; padding: 6px 10px; width: 24%;">
-    	<strong>Note: </strong>Drag &amp; Drop is auto save.
+    	<strong>Note: </strong>Drag &amp; Drop to reorder slides.
   	</p>
     
 	<?php if(!empty($wp_logo_slider_images)) : ?>
