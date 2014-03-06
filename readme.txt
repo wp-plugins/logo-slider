@@ -12,7 +12,7 @@ Showcase logos in stylish slideshow carousel.
 
 == Description ==
 
-Add a reponsive logo slideshow carousel to your site quickly and easily. Embed in any post/page using shortcode `[logo-slider]` or in your theme with `<?php logo_slider(); ?>`
+Add a reponsive logo slideshow carousel to your site quickly and easily. Embed in any post/page using shortcode `[logo-slider]` or in your theme `<?php logo_slider(); ?>`
 
 Perfect for displaying a list of sponsor or client logos.
 
