@@ -3,7 +3,7 @@ Contributors: EnigmaWeb
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=CEJ9HFWJ94BG4
 Tags: logo slide, logo slideshow, logo slide show, logo carousel, image carousel, logo slider, sponsors, logo showcase
 Requires at least: 3.1
-Tested up to: 3.6
+Tested up to: 3.8.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -12,14 +12,16 @@ Showcase logos in stylish slideshow carousel.
 
 == Description ==
 
-Add a logo slideshow carousel to your site quickly and easily. Embed in any post/page using shortcode `[logo-slider]` or in your theme with `<?php logo_slider(); ?>`
+Add a fully reponsive logo slideshow carousel to your site quickly and easily. Embed in any post/page using shortcode `[logo-slider]` or in your theme with `<?php logo_slider(); ?>`
 
 Perfect for displaying a list of sponsor or client logos.
 
 = Features =
 *	Simple and light weight
+*	Fully responsive
+*	Drag & Drop to reorder slider
 *	Nice selection of arrow icons
-*	Easy to customise (height, width, number of images before slide etc)
+*	Easy to customise (height, width, transition type etc)
 *	Easy image uploader
 *	Ability to add links to each logo if you want
 *	Auto-slide option
@@ -63,6 +65,14 @@ If you've tried all the obvious stuff and it's still not working please request 
 2. The settings screen in WP-Admin
 
 == Changelog ==
+
+= 1.4 =
+* Now fully responsive
+* Drag & Drop to reorder slider
+* Open slide link in new window
+* Turn arrows On/Off
+* Fade transition as an option
+* Internationalization
 
 = 1.3 =
 * Fixed background colour setting

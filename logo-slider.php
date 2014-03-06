@@ -3,9 +3,9 @@
 Plugin Name: Logo Slider
 Plugin URI: http://www.wordpress.org/extend/plugins/logo-slider
 Description:  Add a logo slideshow carousel to your site quicky and easily. Embedd in any post/page using shortcode <code>[logo-slider]</code> or to your theme with <code><?php logo_slider(); ?></code>
-Version: 1.3
-Author: Enigma Digital
-Author URI: http://www.enigmaweb.com.au/
+Version: 1.4
+Author: Enigma Plugins
+Author URI: http://www.enigmaplugins.com
 */
 
 
@@ -15,6 +15,13 @@ This section defines the variables that
 will be used throughout the plugin
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
+
+
+error_reporting(0);
+
+// Localization / Internationalization
+load_plugin_textdomain( 'lgs', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	
 //	define our defaults (filterable)
 $wp_logo_defaults = apply_filters('wp_logo_defaults', array(
 	
@@ -23,7 +30,7 @@ $wp_logo_defaults = apply_filters('wp_logo_defaults', array(
 	'bgcolour' => '#FFFFFF',
 	'slider_width' => 450,
 	'slider_height' => 198,
-	'num_img' => 2,
+	//'num_img' => 2,
 	'auto_slide' => 1,
 	'auto_slide_time' => '',
 	
@@ -105,9 +112,9 @@ function wp_logo_slider() {
 
 /*
 ///////////////////////////////////////////////
-this section handles uploading images, adding
-the image data to the database, deleting images,
-and deleting image data from the database.
+	this section handles uploading images, adding
+	the image data to the database, deleting images,
+	and deleting image data from the database.
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 */
 //	this function handles the file upload,
@@ -130,7 +137,7 @@ function wp_logo_handle_upload() {
 	//	if the uploaded file is NOT an image
 	if(strpos($type, 'image') === FALSE) {
 		unlink($file); // delete the file
-		echo '<div class="error" id="message"><p>Sorry, but the file you uploaded does not seem to be a valid image. Please try again.</p></div>';
+		echo '<div class="error" id="message"><p>'.__('Sorry, but the file you uploaded does not seem to be a valid image. Please try again.','lgs').'</p></div>';
 		return;
 	}
 	
@@ -161,8 +168,10 @@ function wp_logo_handle_upload() {
 		$thumbnail_url = $upload_dir_url . basename($thumbnail);
 	}
 	
-    
-	
+	$row = 1; 
+	foreach((array)$wp_logo_slider_images as $image => $data) : 
+		$row++;
+	endforeach;
 	//	use the timestamp as the array key and id
 	$time = date('YmdHis');
 	
@@ -217,7 +226,7 @@ will display a notice, and reset the update option.
 function wp_logo_slider_settings_update_check() {
 	global $wp_logo_slider_settings;
 	if(isset($wp_logo_slider_settings['update'])) {
-		echo '<div class="updated fade" id="message"><p>Wordpress Logo Slider Settings <strong>'.$wp_logo_slider_settings['update'].'</strong></p></div>';
+		echo '<div class="updated fade" id="message"><p>'.__('Logo Slider Settings <strong>'.$wp_logo_slider_settings['update'],'lgs').'</strong></p></div>';
 		unset($wp_logo_slider_settings['update']);
 		update_option('wp_logo_slider_settings', $wp_logo_slider_settings);
 	}
@@ -227,7 +236,7 @@ function wp_logo_slider_settings_update_check() {
 function wp_logo_slider_images_update_check() {
 	global $wp_logo_slider_images;
 	if($wp_logo_slider_images['update'] == 'Added' || $wp_logo_slider_images['update'] == 'Deleted' || $wp_logo_slider_images['update'] == 'Updated') {
-		echo '<div class="updated fade" id="message"><p>Image(s) '.$wp_logo_slider_images['update'].' Successfully</p></div>';
+		echo '<div class="updated fade" id="message"><p>'.__('Image(s) '.$wp_logo_slider_images['update'].' Successfully','lgs').'</p></div>';
 		unset($wp_logo_slider_images['update']);
 		update_option('wp_logo_slider_images', $wp_logo_slider_images);
 	}
@@ -244,16 +253,16 @@ on the admin page. it's mostly form markup.
 function wp_logo_images_admin() { ?>
 	<?php global $wp_logo_slider_images; ?>
 	<?php wp_logo_slider_images_update_check(); ?>
-	<h2><?php _e('Wordpress LogoSlider Images', 'wp_LogoSlider'); ?></h2>
+	<h2><?php _e('Wordpress LogoSlider Images','lgs'); ?></h2>
 	
 	<table class="form-table">
-		<tr valign="top"><th scope="row">Upload New Image</th>
+		<tr valign="top"><th scope="row"><?php _e('Upload New Image','lgs') ?></th>
 			<td>
 			<form enctype="multipart/form-data" method="post" action="?page=wp_logo_slider">
 				<input type="hidden" name="post_id" id="post_id" value="0" />
 				<input type="hidden" name="action" id="action" value="wp_handle_upload" />
 				
-				<label for="logo_images">Select a File: </label>
+				<label for="logo_images"><?php _e('Select a File: ','lgs') ?></label>
 				<input type="file" name="logo_images" id="logo_images" />
 				<input type="submit" class="button-primary" name="html-upload" value="Upload" />
 			</form>
@@ -261,21 +270,25 @@ function wp_logo_images_admin() { ?>
 		</tr>
 	</table><br />
 	
+	<p style="border:2px solid #999; border-radius: 10px; font-size: 12px; padding: 6px 10px; width: 24%;">
+    	<strong>Note: </strong>Drag &amp; Drop is auto save.
+  	</p>
+    
 	<?php if(!empty($wp_logo_slider_images)) : ?>
-	<table class="widefat fixed" cellspacing="0">
+	<table class="widefat fixed" cellspacing="0" id="image_sort" style="width:100%; table-layout:inherit;">
 		<thead>
 			<tr>
-				<th scope="col" class="column-slug">Image</th>
-				<th scope="col">Image Links To</th>
-				<th scope="col" class="column-slug">Actions</th>
+				<th scope="col" class="column-slug"><?php _e('Image','lgs') ?></th>
+				<th scope="col"><?php _e('Image Links To','lgs') ?></th>
+				<th scope="col" class="column-slug"><?php _e('Actions','lgs') ?></th>
 			</tr>
 		</thead>
 		
 		<tfoot>
 			<tr>
-				<th scope="col" class="column-slug">Image</th>
-				<th scope="col">Image Links To</th>
-				<th scope="col" class="column-slug">Actions</th>
+				<th scope="col" class="column-slug"><?php _e('Image','lgs') ?></th>
+				<th scope="col"><?php _e('Image Links To','lgs') ?></th>
+				<th scope="col" class="column-slug"><?php _e('Actions','lgs') ?></th>
 			</tr>
 		</tfoot>
 		
@@ -284,14 +297,14 @@ function wp_logo_images_admin() { ?>
 		<form method="post" action="options.php">
 		<?php settings_fields('wp_logo_slider_images'); ?>
 		<?php foreach((array)$wp_logo_slider_images as $image => $data) : ?>
-			<tr>
+			<tr id="list_item_<?php echo $image ?>" class="list_item">
 				<input type="hidden" name="wp_logo_slider_images[<?php echo $image; ?>][id]" value="<?php echo $data['id']; ?>" />
 				<input type="hidden" name="wp_logo_slider_images[<?php echo $image; ?>][file]" value="<?php echo $data['file']; ?>" />
 				<input type="hidden" name="wp_logo_slider_images[<?php echo $image; ?>][file_url]" value="<?php echo $data['file_url']; ?>" />
 				<input type="hidden" name="wp_logo_slider_images[<?php echo $image; ?>][thumbnail]" value="<?php //echo $data['thumbnail']; ?>" />
 				<input type="hidden" name="wp_logo_slider_images[<?php echo $image; ?>][thumbnail_url]" value="<?php echo $data['thumbnail_url']; ?>" />
 				<th scope="row" class="column-slug"><img src="<?php echo $data['thumbnail_url']; ?>" /></th>
-                <td><input type="text" name="wp_logo_slider_images[<?php echo $image; ?>][image_links_to]" value="<?php echo $data['image_links_to']; ?>" size="30" /></td>
+                <td><?php //echo $image; ?><input type="text" name="wp_logo_slider_images[<?php echo $image; ?>][image_links_to]" value="<?php echo $data['image_links_to']; ?>" size="30" /></td>
 				<td class="column-slug"><input type="submit" class="button-primary" value="Update" /> <a href="?page=wp_logo_slider&amp;delete=<?php echo $image; ?>" class="button">Delete</a></td>
 			</tr>
 		<?php endforeach; ?>
@@ -305,39 +318,117 @@ function wp_logo_images_admin() { ?>
 <?php
 }
 
+
+/*
+///////////////////////////////////////////////
+			SORTABLE FUNCTION.
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+*/
+
+function image_sort(){  
+wp_enqueue_script('jquery');
+?>
+<!--<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>-->
+<?php 
+wp_enqueue_script('jquery-ui-sortable');
+?>
+<script type="text/javascript">
+
+jQuery(document).ready( function(e) {
+   jQuery('#image_sort').sortable({
+	   		items: '.list_item',
+			opacity: 0.5,
+			cursor: 'pointer',
+			axis: 'y',
+			update: function() {
+				var ordr = jQuery(this).sortable('serialize') + '&action=list_update_order';
+				jQuery.post(ajaxurl, ordr, function(response){
+					//alert(response);
+				});
+			}
+	  });
+});
+
+</script>
+<?php
+    }
+	add_action('admin_head','image_sort');
+	
+	function order_list(){
+		global $wp_logo_slider_images;
+		
+		$list = $wp_logo_slider_images;
+		$new_order = $_POST['list_item'];
+		$new_list = array();
+		
+		foreach($new_order as $v){
+			if(isset($list[$v])){
+				$new_list[$v] = $list[$v];
+			}
+		}
+		update_option('wp_logo_slider_images',$new_list);
+	}
+	add_action('wp_ajax_list_update_order','order_list');
+
+/*============================================================================================*/
+
+
 //	display the settings administration code
 function wp_logo_settings_admin() { ?>
 
 	<?php wp_logo_slider_settings_update_check(); ?>
-	<h2><?php _e('Wordpress Logo Slider Settings', 'wp-LogoSlider'); ?></h2>
+	<h2><?php _e('Wordpress Logo Slider Settings','lgs'); ?></h2>
 	<form method="post" action="options.php">
 	<?php settings_fields('wp_logo_slider_settings'); ?>
 	<?php global $wp_logo_slider_settings; $options = $wp_logo_slider_settings; ?>
 	<table class="form-table">
-		<tr><th scope="row">Size</th>
-		<td>Width: <input type="text" name="wp_logo_slider_settings[slider_width]" value="<?php echo $options['slider_width'] ?>" size="4" /> Height: <input type="text" name="wp_logo_slider_settings[slider_height]" value="<?php echo $options['slider_height'] ?>" size="4" /></td></tr>
+		<tr><th scope="row"><?php _e('Size','lgs') ?></th>
+		<td><?php _e('Width: ','lgs') ?><input type="text" name="wp_logo_slider_settings[slider_width]" value="<?php echo $options['slider_width'] ?>" size="4" /> <?php _e('Height: ','lgs') ?><input type="text" name="wp_logo_slider_settings[slider_height]" value="<?php echo $options['slider_height'] ?>" size="4" /></td></tr>
 			
-		<tr><th scope="row">Images Per Slide</th>
-		<td><input type="text" name="wp_logo_slider_settings[num_img]" value="<?php echo $options['num_img'] ?>" size="4" /> <small>Number of logos per slide</small></td>
+		<?php /*?><tr><th scope="row"><?php _e('Images Per Slide','lgs') ?></th>
+		<td>
+        <select name="wp_logo_slider_settings[num_img]">
+        	<option value="1" <?php echo ($options['num_img'] == '1' ? 'selected="selected"' : '') ?>><?php _e('1','lgs') ?></option>
+        	<option value="2" <?php echo ($options['num_img'] == '2' ? 'selected="selected"' : '') ?>><?php _e('2','lgs') ?></option>
+        	<option value="3" <?php echo ($options['num_img'] == '3' ? 'selected="selected"' : '') ?>><?php _e('3','lgs') ?></option>
+        	<option value="4" <?php echo ($options['num_img'] == '4' ? 'selected="selected"' : '') ?>><?php _e('4','lgs') ?></option>
+        	<option value="5" <?php echo ($options['num_img'] == '5' ? 'selected="selected"' : '') ?>><?php _e('5','lgs') ?></option>
+        	<option value="6" <?php echo ($options['num_img'] == '6' ? 'selected="selected"' : '') ?>><?php _e('6','lgs') ?></option>
+        </select> <small><?php _e('Number of logos per slide','lgs') ?></small> </td>
+        </tr><?php */?>
+        
+		<tr><th scope="row"><?php _e('Background Colour','lgs') ?></th>
+		<td><input type="text" name="wp_logo_slider_settings[bgcolour]" value="<?php echo $options['bgcolour'] ?>" /> <small><?php _e('Format: ','lgs') ?>#FFFFFF</small></td>
         </tr>
         
-		<tr><th scope="row">Background Colour</th>
-		<td><input type="text" name="wp_logo_slider_settings[bgcolour]" value="<?php echo $options['bgcolour'] ?>" /> <small>Format: #FFFFFF</small></td>
+        <tr><th scope="row"><?php _e('Open logo links in New Window','lgs') ?></th>
+		<td><input type="checkbox" name="wp_logo_slider_settings[new_window]" <?php echo ($options['new_window'] == 'on' ? 'checked="checked"' : '' ) ?> /></td>
         </tr>
-        <tr><th scope="row">Auto Slide</th>
+        
+        <tr><th scope="row"><?php _e('Select Slider','lgs') ?></th>
+		<td>
+        	<select name="wp_logo_slider_settings[select_slider]">
+                <option value="slide" <?php echo ($options['select_slider'] == 'slide' ? 'selected="selected"' : '' ) ?>><?php _e('Slide','lgs') ?></option>
+                <option value="fade" <?php echo ($options['select_slider'] == 'fade' ? 'selected="selected"' : '' ) ?>><?php _e('Fade','lgs') ?></option>
+            </select>
+        </td>
+        </tr>
+        
+        <tr><th scope="row"><?php _e('Auto Slide','lgs') ?></th>
 		<td id="arrow-style"> 
             	
-                ON <input type="radio" name="wp_logo_slider_settings[auto_slide]" value="1" <?php if($options['auto_slide']==1){echo 'checked="checked"';}?> />&nbsp; &nbsp;
-                OFF <input type="radio" name="wp_logo_slider_settings[auto_slide]" value="2" <?php if($options['auto_slide']==2){echo 'checked="checked"';}?>/>
+                <?php _e('ON','lgs') ?> <input type="radio" name="wp_logo_slider_settings[auto_slide]" value="1" <?php if($options['auto_slide']==1){echo 'checked="checked"';}?> />&nbsp; &nbsp;
+                <?php _e('OFF','lgs') ?> <input type="radio" name="wp_logo_slider_settings[auto_slide]" value="2" <?php if($options['auto_slide']==2){echo 'checked="checked"';}?>/>
                 </td>
                 </tr>
-                <tr><th scope="row">Auto Slide Time</th>
-		<td><input type="text" name="wp_logo_slider_settings[auto_slide_time]" value="<?php echo $options['auto_slide_time'] ?>" size="4" /> <small>Set auto slide duration in seconds</small></td>
+                <tr><th scope="row"><?php _e('Auto Slide Time','lgs') ?></th>
+		<td><input type="text" name="wp_logo_slider_settings[auto_slide_time]" value="<?php echo $options['auto_slide_time'] ?>" size="4" /> <small><?php _e('Set auto slide duration in seconds','lgs') ?></small></td>
         </tr>
        
-        <tr><th scope="row">Arrow Style</th>
+        <tr><th scope="row"><?php _e('Arrow Style','lgs') ?></th>
 		<td id="arrow-style"> 
-            	
+        
+            	<p><img src="<?php echo plugin_dir_url(__FILE__); ?>/arrows/off.png" width="28" height="40" alt="" /><br /><input type="radio" name="wp_logo_slider_settings[arrow]" value="0" <?php if($options['arrow']==0){echo 'checked="checked"';}?> /></p>
                 <p><img src="<?php echo plugin_dir_url(__FILE__); ?>/arrows/arrow1.png" width="28" height="40" alt="" /><br /><input type="radio" name="wp_logo_slider_settings[arrow]" value="1" <?php if($options['arrow']==1){echo 'checked="checked"';}?> /></p>
                 <p><img src="<?php echo plugin_dir_url(__FILE__); ?>/arrows/arrow2.png" width="31" height="40" alt="" /><br /><input type="radio" name="wp_logo_slider_settings[arrow]" value="2" <?php if($options['arrow']==2){echo 'checked="checked"';}?>/></p>
                 <p><img src="<?php echo plugin_dir_url(__FILE__); ?>/arrows/arrow3.png" width="34" height="40" alt="" /><br /><input type="radio" name="wp_logo_slider_settings[arrow]" value="3" <?php if($options['arrow']==3){echo 'checked="checked"';}?>/></p>
@@ -348,14 +439,14 @@ function wp_logo_settings_admin() { ?>
                 
            </td>
         </tr>
-        <tr valign="top"><th scope="row">Custom CSS</th>
+        <tr valign="top"><th scope="row"><?php _e('Custom CSS','lgs') ?></th>
 		<td><textarea name="wp_logo_slider_settings[custom_css]" rows="6" cols="70"><?php echo $options['custom_css']; ?></textarea></td>
 		</tr>
        <input type="hidden" name="wp_logo_slider_settings[update]" value="UPDATED" />
 	 
 	</table>
 	<p class="submit">
-	<input type="submit" class="button-primary" value="<?php _e('Save Settings') ?>" />
+	<input type="submit" class="button-primary" value="<?php _e('Save Settings','lgs') ?>" />
 	</form>
 	
 	<!-- The Reset Option -->
@@ -366,7 +457,7 @@ function wp_logo_settings_admin() { ?>
 	<input type="hidden" name="wp_logo_slider_settings[<?php echo $key; ?>]" value="<?php echo $value; ?>" />
 	<?php endforeach; ?>
 	<input type="hidden" name="wp_logo_slider_settings[update]" value="RESET" />
-	<input type="submit" class="button" value="<?php _e('Reset Settings') ?>" />
+	<input type="submit" class="button" value="<?php _e('Reset Settings','lgs') ?>" />
 	</form>
 	<!-- End Reset Option -->
 	</p>
@@ -385,7 +476,7 @@ gets stored in the database via options.php
 function wp_logo_settings_validate($input) {
 	$input['slider_width'] = intval($input['slider_width']);
 	$input['slider_height'] = intval($input['slider_height']);
-	$input['num_img'] = intval($input['num_img']);
+	//$input['num_img'] = intval($input['num_img']);
 	$input['arrow'] = intval($input['arrow']);
 	$input['custom_css'] = wp_filter_nohtml_kses($input['custom_css']);
 	$input['bgcolour'] = wp_filter_nohtml_kses($input['bgcolour']);
@@ -422,14 +513,63 @@ function logo_slider($args = array(), $content = null) {
 	$newline = "\n"; // line break
 	echo '<div id="logo-slider-wraper">';
 	
+	$check = $wp_logo_slider_settings['new_window'];
 	
-	$data_chunks = array_chunk($wp_logo_slider_images, $wp_logo_slider_settings['num_img']);
+	$new_window = '';
+	
+	if(isset($check))
+		{
+			$new_window = 'target="_blank"';
+		}
+	else
+		{
+			$new_window = 'target="_parent"';
+		}
+		
+		$img_num1 = 1;
+		$img_num2 = 2;
+		$img_num3 = 3;
+		$img_num4 = 4;
+		
+	$iPod    = stripos($_SERVER['HTTP_USER_AGENT'],"iPod");
+	$iPhone  = stripos($_SERVER['HTTP_USER_AGENT'],"iPhone");
+	$iPad    = stripos($_SERVER['HTTP_USER_AGENT'],"iPad");
+	$Android = stripos($_SERVER['HTTP_USER_AGENT'],"Android");
+	$webOS   = stripos($_SERVER['HTTP_USER_AGENT'],"webOS");
+	$mobile = stripos($_SERVER['HTTP_USER_AGENT'],"mobile");
+	$BlackBerry = stripos($_SERVER['HTTP_USER_AGENT'],"BlackBerry");
+	$RimTablet= stripos($_SERVER['HTTP_USER_AGENT'],"RIM Tablet");
+	
+	$msie = strpos($_SERVER["HTTP_USER_AGENT"], 'MSIE');
+	$firefox = strpos($_SERVER["HTTP_USER_AGENT"], 'Firefox');
+	$safari = strpos($_SERVER["HTTP_USER_AGENT"], 'Safari');
+	$chrome = strpos($_SERVER["HTTP_USER_AGENT"], 'Chrome');
+	$Opera = strpos($_SERVER["HTTP_USER_AGENT"], 'Opera');
+	
+	if( $iPod || $iPhone ){
+		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+	}else if($iPad){
+		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+	}else if($Android){
+		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+	}else if($webOS){
+		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+	}else if($mobile){
+		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+	}else if($BlackBerry){
+		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+	}else if($RimTablet){
+		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+	}else if(($msie) || ($firefox) || ($safari) || ($chrome)){
+		$data_chunks = array_chunk($wp_logo_slider_images, $img_num4);
+	}
+	
 	echo '<ul id="logo-slider">';
 	foreach ($data_chunks as $data_chunk) {
 		echo '<li class="slide">';
 		foreach($data_chunk as $data) {
 			if($data['image_links_to'])
-		echo '<a href="'.$data['image_links_to'].'">';
+		echo '<a href="'.$data['image_links_to'].'" '.$new_window.'>';
 		echo '<img src="'.$data['file_url'].'" class="logo-img" alt="" />';
 		
 		if($data['image_links_to'])
@@ -466,13 +606,41 @@ function wp_LogoSlider_scripts() {
 add_action('wp_footer', 'wp_slider_args', 15);
 function wp_slider_args() {
 	global $wp_logo_slider_settings; ?>
-
-
+    
+	
 <script type="text/javascript">
 jQuery(document).ready(function($) {
-	$('#logo-slider').before('<div class="slider-controls"><a href="#" id="prev">&lt;</a> <a href="#" id="next">&gt;</a></div>').cycle({ 
+	$('#logo-slider')
+	<?php
+	 if($wp_logo_slider_settings['arrow'] == '0')
+	 	{
+			echo '';
+		}
+	else
+		{
+	?>
+		.before('<div class="slider-controls"><a href="#" id="prev">&lt;</a> <a href="#" id="next">&gt;</a></div>')
+	<?php
+		}
+	?>
+	.cycle({ 
     timeout: <?php if($wp_logo_slider_settings['auto_slide'] == 1) {echo $wp_logo_slider_settings['auto_slide_time'] * 1000;} else { echo 0;} ?>,
+	<?php
+		$slid = $wp_logo_slider_settings['select_slider'];
+		
+		if($slid == 'slide')
+			{
+	?>
 	fx:      'scrollHorz',
+	<?php
+			}
+		else if($slid == 'fade')
+			{
+	?>
+	fx:      'fade',
+	<?php
+			}
+	?>
 	next:   '#prev',
 	prev:   '#next',
 });
@@ -487,7 +655,7 @@ function wp_logo_slider_style() {
 	global $wp_logo_slider_settings;
 	global $options;
 ?>
-	
+
 <style type="text/css" media="screen">
 	<?php 
 		echo $wp_logo_slider_settings['custom_css'];
@@ -499,8 +667,7 @@ function wp_logo_slider_style() {
 	.slider-controls{
 		position:relative;
 		width:<?php echo $wp_logo_slider_settings['slider_width']; ?>px;	
-		top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 20 ?>px;
-
+		top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px !important;
 	}
 	#logo-slider {
 		position: relative;
@@ -532,6 +699,185 @@ function wp_logo_slider_style() {
 		float:left;
 		margin-left:-50px
 	}
+	
+/*
+===============================================================
+	--------------------_ Responsive _--------------------
+===============================================================
+*/
+
+	@media screen and (max-width:320px){
+		#logo-slider-wraper{
+			position:relative !important;
+			width:52% !important;
+			left:42px;
+		}
+		.slider-controls {
+			position: relative;
+			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
+			left:30px;
+			width: 100% !important;
+		}
+		#logo-slider {
+			background: none repeat scroll 0 0 #FFFFFF;
+			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
+			list-style: none outside none;
+			margin: 0;
+			overflow: hidden;
+			padding: 0;
+			position: relative;
+			width: 110% !important;
+		}
+		.slide {
+			list-style: none outside none;
+			margin: 0 !important;
+			width: 100% !important;
+		}
+		#next{
+			background:url(<?php echo WP_CONTENT_URL.'/plugins/logo-slider/arrows/arrow'. $wp_logo_slider_settings['arrow'].'-prev.png'; ?>) no-repeat center;
+			float:left;
+			margin-left:-66px !important;
+		}
+		.logo-img {
+			margin-left:32px;
+		}
+	}
+	@media screen and (min-width:321px) and (max-width:480px){
+		#logo-slider-wraper{
+			position:relative;
+			width:70% !important;
+			left:55px !important;
+		}
+		.slider-controls {
+			position: relative;
+			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
+			width: 100% !important;
+		}
+		#logo-slider {
+			background: none repeat scroll 0 0 #FFFFFF;
+			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
+			list-style: none outside none;
+			margin: 0;
+			overflow: hidden;
+			padding: 0;
+			position: relative;
+			width: 102% !important;
+		}
+		.slide {
+			list-style: none outside none;
+			margin: 0 !important;
+			width: 100% !important;
+		}
+	}
+	@media screen and (min-width:321px) and (max-width:360px){
+		#logo-slider-wraper{
+			position:relative;
+			width:50% !important;
+		}
+		.slider-controls {
+			position: relative;
+			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
+			width: 100% !important;
+		}
+		#logo-slider {
+			background: none repeat scroll 0 0 #FFFFFF;
+			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
+			list-style: none outside none;
+			margin: 0;
+			overflow: hidden;
+			padding: 0;
+			position: relative;
+			width: 100% !important;
+		}
+		.slide {
+			list-style: none outside none;
+			margin: 0 !important;
+			width: 100% !important;
+		}
+	}
+	@media screen and (min-width:481px) and (max-width:640px){
+		#logo-slider-wraper{
+			position:relative;
+			width:74% !important;
+			left:34px !important
+		}
+		.slider-controls {
+			position: relative;
+			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
+			width: 100% !important;
+		}
+		#logo-slider {
+			background: none repeat scroll 0 0 #FFFFFF;
+			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
+			list-style: none outside none;
+			margin: 0;
+			overflow: hidden;
+			padding: 0;
+			position: relative;
+			width: 100% !important;
+		}
+		.slide {
+			list-style: none outside none;
+			margin: 0 !important;
+			width: 100% !important;
+		}
+	}
+	@media only screen and (min-width:641px) and (max-width:768px){
+		#logo-slider-wraper{
+			position:relative;
+			width:90% !important;
+			left:34px !important
+		}
+		.slider-controls {
+			position: relative;
+			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
+			width: 100% !important;
+		}
+		#logo-slider {
+			background: none repeat scroll 0 0 #FFFFFF;
+			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
+			list-style: none outside none;
+			margin: 0;
+			overflow: hidden;
+			padding: 0;
+			position: relative;
+			width: 100% !important;
+			left:-12px;
+		}
+		.slide {
+			list-style: none outside none;
+			margin: 0 !important;
+			width: 100% !important;
+		}
+	}
+	@media only screen and (min-width:770px){
+		#logo-slider-wraper{
+			position:relative;
+			width:94% !important;
+			left:34px !important
+		}
+		.slider-controls {
+			position: relative;
+			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
+			width: 100% !important;
+		}
+		#logo-slider {
+			background: none repeat scroll 0 0 #FFFFFF;
+			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
+			list-style: none outside none;
+			margin: 0;
+			overflow: hidden;
+			padding: 0;
+			position: relative;
+			width: 100% !important;
+		}
+		.slide {
+			list-style: none outside none;
+			margin: 0 !important;
+			width: 100% !important;
+		}
+	}
+
 </style>
 	
 <?php }
