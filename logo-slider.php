@@ -3,9 +3,9 @@
 Plugin Name: Logo Slider
 Plugin URI: http://www.wordpress.org/extend/plugins/logo-slider
 Description:  Add a logo slideshow carousel to your site quicky and easily. Embedd in any post/page using shortcode <code>[logo-slider]</code> or to your theme with <code><?php logo_slider(); ?></code>
-Version: 1.4
-Author: Enigma Plugins
-Author URI: http://www.enigmaplugins.com
+Version: 1.4.1
+Author: Enigma Digital
+Author URI: http://www.enigmaweb.com.au/
 */
 
 
@@ -30,7 +30,7 @@ $wp_logo_defaults = apply_filters('wp_logo_defaults', array(
 	'bgcolour' => '#FFFFFF',
 	'slider_width' => 450,
 	'slider_height' => 198,
-	//'num_img' => 2,
+	'num_img' => 2,
 	'auto_slide' => 1,
 	'auto_slide_time' => '',
 	
@@ -226,7 +226,7 @@ will display a notice, and reset the update option.
 function wp_logo_slider_settings_update_check() {
 	global $wp_logo_slider_settings;
 	if(isset($wp_logo_slider_settings['update'])) {
-		echo '<div class="updated fade" id="message"><p>'.__('Logo Slider Settings <strong>'.$wp_logo_slider_settings['update'],'lgs').'</strong></p></div>';
+		echo '<div class="updated fade" id="message"><p>'.__('Wordpress Logo Slider Settings <strong>'.$wp_logo_slider_settings['update'],'lgs').'</strong></p></div>';
 		unset($wp_logo_slider_settings['update']);
 		update_option('wp_logo_slider_settings', $wp_logo_slider_settings);
 	}
@@ -271,7 +271,7 @@ function wp_logo_images_admin() { ?>
 	</table><br />
 	
 	<p style="border:2px solid #999; border-radius: 10px; font-size: 12px; padding: 6px 10px; width: 24%;">
-    	<strong>Note: </strong>Drag &amp; Drop to reorder slides.
+    	<strong>Note: </strong>Drag &amp; Drop is auto save.
   	</p>
     
 	<?php if(!empty($wp_logo_slider_images)) : ?>
@@ -385,17 +385,17 @@ function wp_logo_settings_admin() { ?>
 		<tr><th scope="row"><?php _e('Size','lgs') ?></th>
 		<td><?php _e('Width: ','lgs') ?><input type="text" name="wp_logo_slider_settings[slider_width]" value="<?php echo $options['slider_width'] ?>" size="4" /> <?php _e('Height: ','lgs') ?><input type="text" name="wp_logo_slider_settings[slider_height]" value="<?php echo $options['slider_height'] ?>" size="4" /></td></tr>
 			
-		<?php /*?><tr><th scope="row"><?php _e('Images Per Slide','lgs') ?></th>
+		<tr><th scope="row"><?php _e('Images Per Slide','lgs') ?></th>
 		<td>
         <select name="wp_logo_slider_settings[num_img]">
-        	<option value="1" <?php echo ($options['num_img'] == '1' ? 'selected="selected"' : '') ?>><?php _e('1','lgs') ?></option>
-        	<option value="2" <?php echo ($options['num_img'] == '2' ? 'selected="selected"' : '') ?>><?php _e('2','lgs') ?></option>
         	<option value="3" <?php echo ($options['num_img'] == '3' ? 'selected="selected"' : '') ?>><?php _e('3','lgs') ?></option>
         	<option value="4" <?php echo ($options['num_img'] == '4' ? 'selected="selected"' : '') ?>><?php _e('4','lgs') ?></option>
         	<option value="5" <?php echo ($options['num_img'] == '5' ? 'selected="selected"' : '') ?>><?php _e('5','lgs') ?></option>
         	<option value="6" <?php echo ($options['num_img'] == '6' ? 'selected="selected"' : '') ?>><?php _e('6','lgs') ?></option>
+        	<option value="7" <?php echo ($options['num_img'] == '7' ? 'selected="selected"' : '') ?>><?php _e('7','lgs') ?></option>
+        	<option value="8" <?php echo ($options['num_img'] == '8' ? 'selected="selected"' : '') ?>><?php _e('8','lgs') ?></option>
         </select> <small><?php _e('Number of logos per slide','lgs') ?></small> </td>
-        </tr><?php */?>
+        </tr>
         
 		<tr><th scope="row"><?php _e('Background Colour','lgs') ?></th>
 		<td><input type="text" name="wp_logo_slider_settings[bgcolour]" value="<?php echo $options['bgcolour'] ?>" /> <small><?php _e('Format: ','lgs') ?>#FFFFFF</small></td>
@@ -476,7 +476,7 @@ gets stored in the database via options.php
 function wp_logo_settings_validate($input) {
 	$input['slider_width'] = intval($input['slider_width']);
 	$input['slider_height'] = intval($input['slider_height']);
-	//$input['num_img'] = intval($input['num_img']);
+	$input['num_img'] = intval($input['num_img']);
 	$input['arrow'] = intval($input['arrow']);
 	$input['custom_css'] = wp_filter_nohtml_kses($input['custom_css']);
 	$input['bgcolour'] = wp_filter_nohtml_kses($input['bgcolour']);
@@ -531,6 +531,8 @@ function logo_slider($args = array(), $content = null) {
 		$img_num3 = 3;
 		$img_num4 = 4;
 		
+		$num_img = $wp_logo_slider_settings['num_img'];
+		
 	$iPod    = stripos($_SERVER['HTTP_USER_AGENT'],"iPod");
 	$iPhone  = stripos($_SERVER['HTTP_USER_AGENT'],"iPhone");
 	$iPad    = stripos($_SERVER['HTTP_USER_AGENT'],"iPad");
@@ -559,9 +561,9 @@ function logo_slider($args = array(), $content = null) {
 	}else if($BlackBerry){
 		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
 	}else if($RimTablet){
-		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
-	}else if(($msie) || ($firefox) || ($safari) || ($chrome)){
 		$data_chunks = array_chunk($wp_logo_slider_images, $img_num4);
+	}else if(($msie) || ($firefox) || ($safari) || ($chrome)){
+		$data_chunks = array_chunk($wp_logo_slider_images, $num_img);
 	}
 	
 	echo '<ul id="logo-slider">';
@@ -639,6 +641,12 @@ jQuery(document).ready(function($) {
 	?>
 	fx:      'fade',
 	<?php
+			}
+		else
+			{
+	?>
+	fx:      'scrollHorz',
+	<?php			
 			}
 	?>
 	next:   '#prev',
@@ -745,7 +753,7 @@ function wp_logo_slider_style() {
 	@media screen and (min-width:321px) and (max-width:480px){
 		#logo-slider-wraper{
 			position:relative;
-			width:70% !important;
+			width:35% !important;
 			left:55px !important;
 		}
 		.slider-controls {
@@ -798,7 +806,7 @@ function wp_logo_slider_style() {
 	@media screen and (min-width:481px) and (max-width:640px){
 		#logo-slider-wraper{
 			position:relative;
-			width:74% !important;
+			width:28% !important;
 			left:34px !important
 		}
 		.slider-controls {
@@ -825,7 +833,7 @@ function wp_logo_slider_style() {
 	@media only screen and (min-width:641px) and (max-width:768px){
 		#logo-slider-wraper{
 			position:relative;
-			width:90% !important;
+			width:78% !important;
 			left:34px !important
 		}
 		.slider-controls {
@@ -853,7 +861,7 @@ function wp_logo_slider_style() {
 	@media only screen and (min-width:770px){
 		#logo-slider-wraper{
 			position:relative;
-			width:94% !important;
+			width:<?php echo $wp_logo_slider_settings['slider_width']; ?>px !important;
 			left:34px !important
 		}
 		.slider-controls {
@@ -874,7 +882,7 @@ function wp_logo_slider_style() {
 		.slide {
 			list-style: none outside none;
 			margin: 0 !important;
-			width: 100% !important;
+			width: <?php echo $wp_logo_slider_settings['slider_width']; ?>px !important;
 		}
 	}
 

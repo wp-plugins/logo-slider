@@ -66,6 +66,9 @@ If you've tried all the obvious stuff and it's still not working please request 
 
 == Changelog ==
 
+= 1.4.1 =
+* Fixed number of slides bug (was stuck on 4). Field is now re-implemented so you can set number of logos per slide on desktop layout.
+
 = 1.4 =
 * Now fully responsive
 * Drag & Drop to reorder slider
@@ -87,6 +90,17 @@ If you've tried all the obvious stuff and it's still not working please request 
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.4.1 =
+* Fixed number of slides bug (was stuck on 4). Field is now re-implemented so you can set number of logos per slide on desktop layout.
+
+= 1.4 =
+* Now fully responsive
+* Drag & Drop to reorder slider
+* Open slide link in new window
+* Turn arrows On/Off
+* Fade transition as an option
+* Internationalization
 
 = 1.3 =
 * Fixed background colour setting
