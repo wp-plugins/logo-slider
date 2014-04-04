@@ -68,6 +68,7 @@ If you've tried all the obvious stuff and it's still not working please request 
 
 = 1.4.2 =
 * Fix for IE 11
+* Added option for 1 or 2 images per slide (so 3 is no longer lowest option)
 
 = 1.4.1 =
 * Fixed number of slides bug (was stuck on 4). Field is now re-implemented so you can set number of logos per slide on desktop layout.
@@ -96,6 +97,7 @@ If you've tried all the obvious stuff and it's still not working please request 
 
 = 1.4.2 =
 * Fix for IE 11
+* Added option for 1 or 2 images per slide (so 3 is no longer lowest option)
 
 = 1.4.1 =
 * Fixed number of slides bug (was stuck on 4). Field is now re-implemented so you can set number of logos per slide on desktop layout.
