@@ -3,7 +3,7 @@
 Plugin Name: Logo Slider
 Plugin URI: http://www.wordpress.org/extend/plugins/logo-slider
 Description:  Add a logo slideshow carousel to your site quicky and easily. Embedd in any post/page using shortcode <code>[logo-slider]</code> or to your theme with <code><?php logo_slider(); ?></code>
-Version: 1.4.1
+Version: 1.4.2
 Author: Enigma Digital
 Author URI: http://www.enigmaweb.com.au/
 */
@@ -388,6 +388,8 @@ function wp_logo_settings_admin() { ?>
 		<tr><th scope="row"><?php _e('Images Per Slide','lgs') ?></th>
 		<td>
         <select name="wp_logo_slider_settings[num_img]">
+        	<option value="1" <?php echo ($options['num_img'] == '1' ? 'selected="selected"' : '') ?>><?php _e('1','lgs') ?></option>
+        	<option value="2" <?php echo ($options['num_img'] == '2' ? 'selected="selected"' : '') ?>><?php _e('2','lgs') ?></option>
         	<option value="3" <?php echo ($options['num_img'] == '3' ? 'selected="selected"' : '') ?>><?php _e('3','lgs') ?></option>
         	<option value="4" <?php echo ($options['num_img'] == '4' ? 'selected="selected"' : '') ?>><?php _e('4','lgs') ?></option>
         	<option value="5" <?php echo ($options['num_img'] == '5' ? 'selected="selected"' : '') ?>><?php _e('5','lgs') ?></option>
@@ -519,20 +521,21 @@ function logo_slider($args = array(), $content = null) {
 	
 	if(isset($check))
 		{
-			$new_window = 'target="_blank"';
+                    $new_window = 'target="_blank"';
 		}
 	else
 		{
-			$new_window = 'target="_parent"';
+                    $new_window = 'target="_parent"';
 		}
 		
-		$img_num1 = 1;
-		$img_num2 = 2;
-		$img_num3 = 3;
-		$img_num4 = 4;
-		
-		$num_img = $wp_logo_slider_settings['num_img'];
-		
+        $img_num1 = 1;
+        $img_num2 = 2;
+        $img_num3 = 3;
+        $img_num4 = 4;
+
+        $num_img = $wp_logo_slider_settings['num_img'];
+        
+        // Get web and other device engins for Responsive
 	$iPod    = stripos($_SERVER['HTTP_USER_AGENT'],"iPod");
 	$iPhone  = stripos($_SERVER['HTTP_USER_AGENT'],"iPhone");
 	$iPad    = stripos($_SERVER['HTTP_USER_AGENT'],"iPad");
@@ -546,36 +549,38 @@ function logo_slider($args = array(), $content = null) {
 	$firefox = strpos($_SERVER["HTTP_USER_AGENT"], 'Firefox');
 	$safari = strpos($_SERVER["HTTP_USER_AGENT"], 'Safari');
 	$chrome = strpos($_SERVER["HTTP_USER_AGENT"], 'Chrome');
-	$Opera = strpos($_SERVER["HTTP_USER_AGENT"], 'Opera');
+	$Opera = strpos($_SERVER["HTTP_USER_AGENT"], 'OPR');
+        $IE11 = strpos($_SERVER["HTTP_USER_AGENT"], 'rv:11.0');
 	
 	if( $iPod || $iPhone ){
-		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+            $data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
 	}else if($iPad){
-		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+            $data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
 	}else if($Android){
-		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+            $data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
 	}else if($webOS){
-		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+            $data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
 	}else if($mobile){
-		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+            $data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
 	}else if($BlackBerry){
-		$data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
+            $data_chunks = array_chunk($wp_logo_slider_images, $img_num1);
 	}else if($RimTablet){
-		$data_chunks = array_chunk($wp_logo_slider_images, $img_num4);
-	}else if(($msie) || ($firefox) || ($safari) || ($chrome)){
-		$data_chunks = array_chunk($wp_logo_slider_images, $num_img);
+            $data_chunks = array_chunk($wp_logo_slider_images, $img_num4);
+	}else if(($msie) || ($firefox) || ($safari) || ($chrome) || ($IE11)){
+            $data_chunks = array_chunk($wp_logo_slider_images, $num_img);
 	}
 	
+        // Logo Image Slider
 	echo '<ul id="logo-slider">';
+        
 	foreach ($data_chunks as $data_chunk) {
 		echo '<li class="slide">';
 		foreach($data_chunk as $data) {
-			if($data['image_links_to'])
-		echo '<a href="'.$data['image_links_to'].'" '.$new_window.'>';
-		echo '<img src="'.$data['file_url'].'" class="logo-img" alt="" />';
-		
-		if($data['image_links_to'])
-		echo '</a>';
+                    if($data['image_links_to'])
+                        echo '<a href="'.$data['image_links_to'].'" '.$new_window.'>';
+                    echo '<img src="'.$data['file_url'].'" class="logo-img" alt="" />';
+                    if($data['image_links_to'])
+                    echo '</a>';
 		}
 		echo '</li>';
 	}
@@ -727,7 +732,7 @@ function wp_logo_slider_style() {
 			width: 100% !important;
 		}
 		#logo-slider {
-			background: none repeat scroll 0 0 #FFFFFF;
+			background:<?php echo $wp_logo_slider_settings['bgcolour']; ?>;
 			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
 			list-style: none outside none;
 			margin: 0;
@@ -762,7 +767,7 @@ function wp_logo_slider_style() {
 			width: 100% !important;
 		}
 		#logo-slider {
-			background: none repeat scroll 0 0 #FFFFFF;
+			background:<?php echo $wp_logo_slider_settings['bgcolour']; ?>;
 			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
 			list-style: none outside none;
 			margin: 0;
@@ -788,7 +793,7 @@ function wp_logo_slider_style() {
 			width: 100% !important;
 		}
 		#logo-slider {
-			background: none repeat scroll 0 0 #FFFFFF;
+			background:<?php echo $wp_logo_slider_settings['bgcolour']; ?>;
 			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
 			list-style: none outside none;
 			margin: 0;
@@ -815,7 +820,7 @@ function wp_logo_slider_style() {
 			width: 100% !important;
 		}
 		#logo-slider {
-			background: none repeat scroll 0 0 #FFFFFF;
+			background:<?php echo $wp_logo_slider_settings['bgcolour']; ?>;
 			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
 			list-style: none outside none;
 			margin: 0;
@@ -842,7 +847,7 @@ function wp_logo_slider_style() {
 			width: 100% !important;
 		}
 		#logo-slider {
-			background: none repeat scroll 0 0 #FFFFFF;
+			background:<?php echo $wp_logo_slider_settings['bgcolour']; ?>;
 			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
 			list-style: none outside none;
 			margin: 0;
@@ -870,7 +875,7 @@ function wp_logo_slider_style() {
 			width: 100% !important;
 		}
 		#logo-slider {
-			background: none repeat scroll 0 0 #FFFFFF;
+			background:<?php echo $wp_logo_slider_settings['bgcolour']; ?>;
 			height: <?php echo $wp_logo_slider_settings['slider_height']?>px;
 			list-style: none outside none;
 			margin: 0;

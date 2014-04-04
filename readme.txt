@@ -66,6 +66,9 @@ If you've tried all the obvious stuff and it's still not working please request 
 
 == Changelog ==
 
+= 1.4.2 =
+* Fix for IE 11
+
 = 1.4.1 =
 * Fixed number of slides bug (was stuck on 4). Field is now re-implemented so you can set number of logos per slide on desktop layout.
 
@@ -90,6 +93,9 @@ If you've tried all the obvious stuff and it's still not working please request 
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.4.2 =
+* Fix for IE 11
 
 = 1.4.1 =
 * Fixed number of slides bug (was stuck on 4). Field is now re-implemented so you can set number of logos per slide on desktop layout.
