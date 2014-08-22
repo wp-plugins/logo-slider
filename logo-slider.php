@@ -2,10 +2,10 @@
 /*
 Plugin Name: Logo Slider
 Plugin URI: http://www.wordpress.org/extend/plugins/logo-slider
-Description:  Add a logo slideshow carousel to your site quicky and easily. Embedd in any post/page using shortcode <code>[logo-slider]</code> or to your theme with <code><?php logo_slider(); ?></code>
-Version: 1.4.2
-Author: Enigma Digital
-Author URI: http://www.enigmaweb.com.au/
+Description:  Add a logo slideshow carousel to your site quicky and easily.
+Version: 1.4.3
+Author: Enigma Plugins
+Author URI: http://www.enigmaplugins.com
 */
 
 
@@ -21,7 +21,7 @@ error_reporting(0);
 
 // Localization / Internationalization
 load_plugin_textdomain( 'lgs', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-	
+
 //	define our defaults (filterable)
 $wp_logo_defaults = apply_filters('wp_logo_defaults', array(
 	
@@ -273,7 +273,7 @@ function wp_logo_images_admin() { ?>
 	<p style="border:2px solid #999; border-radius: 10px; font-size: 12px; padding: 6px 10px; width: 24%;">
     	<strong>Note: </strong>Drag &amp; Drop is auto save.
   	</p>
-    
+        
 	<?php if(!empty($wp_logo_slider_images)) : ?>
 	<table class="widefat fixed" cellspacing="0" id="image_sort" style="width:100%; table-layout:inherit;">
 		<thead>
@@ -335,18 +335,18 @@ wp_enqueue_script('jquery-ui-sortable');
 <script type="text/javascript">
 
 jQuery(document).ready( function(e) {
-   jQuery('#image_sort').sortable({
-	   		items: '.list_item',
-			opacity: 0.5,
-			cursor: 'pointer',
-			axis: 'y',
-			update: function() {
-				var ordr = jQuery(this).sortable('serialize') + '&action=list_update_order';
-				jQuery.post(ajaxurl, ordr, function(response){
-					//alert(response);
-				});
-			}
-	  });
+    jQuery('#image_sort').sortable({
+        items: '.list_item',
+        opacity: 0.5,
+        cursor: 'pointer',
+        axis: 'y',
+        update: function() {
+            var ordr = jQuery(this).sortable('serialize') + '&action=list_update_order';
+            jQuery.post(ajaxurl, ordr, function(response){
+                    //alert(response);
+            });
+        }
+    });
 });
 
 </script>
@@ -570,25 +570,52 @@ function logo_slider($args = array(), $content = null) {
             $data_chunks = array_chunk($wp_logo_slider_images, $num_img);
 	}
 	
-        // Logo Image Slider
-	echo '<ul id="logo-slider">';
+        $slid = $wp_logo_slider_settings['select_slider'];
+	$lgs_slide_effect = '';
         
+        if($slid == 'slide'){
+            $lgs_slide_effect = 'scrollHorz';
+        }
+        elseif($slid == 'fade'){
+            $lgs_slide_effect = 'fade';
+        }
+        else{
+            $lgs_slide_effect = 'scrollHorz';
+        }
+        
+        $lgs_auto_slide = $wp_logo_slider_settings['auto_slide'];
+        $lgs_slide_time = $wp_logo_slider_settings['auto_slide_time'];
+                
+        // Logo Image Slider
+?>
+        <ul id="logo-slider" class="cycle-slideshow"
+            data-cycle-fx="<?php echo $lgs_slide_effect ?>"
+            data-cycle-timeout="<?php echo (($lgs_auto_slide == 1 ) ? $lgs_slide_time * 1000 : 0) ?>"
+            data-cycle-next="#prev"
+            data-cycle-prev="#next"
+            data-cycle-speed="600"
+            data-cycle-slides="> li"
+        >
+<?php
 	foreach ($data_chunks as $data_chunk) {
 		echo '<li class="slide">';
+
 		foreach($data_chunk as $data) {
                     if($data['image_links_to'])
                         echo '<a href="'.$data['image_links_to'].'" '.$new_window.'>';
-                    echo '<img src="'.$data['file_url'].'" class="logo-img" alt="" />';
-                    if($data['image_links_to'])
-                    echo '</a>';
+                            echo '<img src="'.$data['file_url'].'" class="logo-img" alt="" />';
+                        if($data['image_links_to'])
+                        echo '</a>';
 		}
+
 		echo '</li>';
 	}
-	echo '</ul>';
-	
-	
+?>
+        </ul>
+<?php
+        echo '<div class="slider-controls"><a href="#" id="prev">&lt;</a> <a href="#" id="next">&gt;</a></div>';
+        
 	echo '</div>';
-	
 }
 
 //	create the shortcode [wp_LogoSlider]
@@ -606,62 +633,13 @@ function wp_slider_shortcode($atts) {
 
 add_action('wp_print_scripts', 'wp_LogoSlider_scripts');
 function wp_LogoSlider_scripts() {
-	if(!is_admin())
-	wp_enqueue_script('cycle', WP_CONTENT_URL.'/plugins/logo-slider/jquery.cycle.all.min.js', array('jquery'), '', true);
-}
-
-add_action('wp_footer', 'wp_slider_args', 15);
-function wp_slider_args() {
-	global $wp_logo_slider_settings; ?>
+    $link = dirname(__DIR__).'/wp-catalogue-pro/includes/js/jquery.cycle2.js';
     
-	
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-	$('#logo-slider')
-	<?php
-	 if($wp_logo_slider_settings['arrow'] == '0')
-	 	{
-			echo '';
-		}
-	else
-		{
-	?>
-		.before('<div class="slider-controls"><a href="#" id="prev">&lt;</a> <a href="#" id="next">&gt;</a></div>')
-	<?php
-		}
-	?>
-	.cycle({ 
-    timeout: <?php if($wp_logo_slider_settings['auto_slide'] == 1) {echo $wp_logo_slider_settings['auto_slide_time'] * 1000;} else { echo 0;} ?>,
-	<?php
-		$slid = $wp_logo_slider_settings['select_slider'];
-		
-		if($slid == 'slide')
-			{
-	?>
-	fx:      'scrollHorz',
-	<?php
-			}
-		else if($slid == 'fade')
-			{
-	?>
-	fx:      'fade',
-	<?php
-			}
-		else
-			{
-	?>
-	fx:      'scrollHorz',
-	<?php			
-			}
-	?>
-	next:   '#prev',
-	prev:   '#next',
-});
-});
-</script>
-
-
-<?php }
+    if(!file_exists($link)){
+        if(!is_admin())
+	wp_enqueue_script('cycle', WP_CONTENT_URL.'/plugins/logo-slider/lgs_jquery.cycle2.js', array('jquery'), '', true);
+    }
+}
 
 add_action( 'wp_head', 'wp_logo_slider_style' );
 function wp_logo_slider_style() { 
@@ -678,7 +656,7 @@ function wp_logo_slider_style() {
 		
 	}
 	.slider-controls{
-		position:relative;
+		position:absolute;
 		width:<?php echo $wp_logo_slider_settings['slider_width']; ?>px;	
 		top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px !important;
 	}
@@ -726,7 +704,7 @@ function wp_logo_slider_style() {
 			left:42px;
 		}
 		.slider-controls {
-			position: relative;
+			position: absolute;
 			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
 			left:30px;
 			width: 100% !important;
@@ -762,7 +740,7 @@ function wp_logo_slider_style() {
 			left:55px !important;
 		}
 		.slider-controls {
-			position: relative;
+			position: absolute;
 			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
 			width: 100% !important;
 		}
@@ -788,7 +766,7 @@ function wp_logo_slider_style() {
 			width:50% !important;
 		}
 		.slider-controls {
-			position: relative;
+			position: absolute;
 			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
 			width: 100% !important;
 		}
@@ -815,7 +793,7 @@ function wp_logo_slider_style() {
 			left:34px !important
 		}
 		.slider-controls {
-			position: relative;
+			position: absolute;
 			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
 			width: 100% !important;
 		}
@@ -842,7 +820,7 @@ function wp_logo_slider_style() {
 			left:34px !important
 		}
 		.slider-controls {
-			position: relative;
+			position: absolute;
 			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
 			width: 100% !important;
 		}
@@ -870,7 +848,7 @@ function wp_logo_slider_style() {
 			left:34px !important
 		}
 		.slider-controls {
-			position: relative;
+			position: absolute;
 			top: <?php echo $wp_logo_slider_settings['slider_height'] / 2 - 19 ?>px;
 			width: 100% !important;
 		}
