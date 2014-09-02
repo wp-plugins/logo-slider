@@ -30,6 +30,15 @@ Perfect for displaying a list of sponsor or client logos.
 
 [Click here](http://demo.enigmaweb.com.au/logo-slider/) to see Logo Slider in action.
 
+= Pro vs Free Version =
+
+This is the Free version of the plugin. [Get Pro Version](http://enigmaplugins.com/plugins/logo-slider-pro/) if you need the following advanced features:
+
+*	Mulitple Slideshows - create as many sliders as you like across your site
+*	Drag n Drop logo manager so you can easily re-order logos
+*	Fully Responsive Design
+*	Use WordPress Media Library for logo images
+
 == Installation ==
 
 1. Upload the `logo-slider` folder to the `/wp-content/plugins/` directory
@@ -46,6 +55,10 @@ Just place the shortcode into a text widget. If that doesn't work (it just rende
 `add_filter('widget_text', 'do_shortcode');`
 
 Add this code above to fuctions.php between the `<?php` and `?>` tags. A good place would be either at the very top or the very bottom of the file. Once you've done this you should be able to use shortcode in widgets now.
+
+= Can I do multiple slideshows? =
+
+This Free version just does 1 slider. If you want multiple sliders [get Pro version here](http://enigmaplugins.com/plugins/logo-slider-pro/).
 
 = How can I customise the design? =
 
