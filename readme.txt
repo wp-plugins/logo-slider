@@ -6,7 +6,6 @@ Requires at least: 3.1
 Tested up to: 4.0
 Stable tag: trunk
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Showcase logos in stylish slideshow carousel.
 
@@ -146,5 +145,7 @@ If you've tried all the obvious stuff and it's still not working please request 
 
 = 1.0 =
 * Initial release
+
+
 
  
