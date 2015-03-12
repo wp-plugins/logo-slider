@@ -78,7 +78,10 @@ If you've tried all the obvious stuff and it's still not working please request 
 
 == Changelog ==
 
-= 1.4.3
+= 1.4.4 =
+* Number of logos to be displayed in iPad - Fixed
+
+= 1.4.3 =
 * Conflict with other slider plugins - Fixed
 * Upgrade jQuery.cycle To jQuery.cycle2 - New
 * conflict with wpc pro - Fixed
@@ -112,6 +115,9 @@ If you've tried all the obvious stuff and it's still not working please request 
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.4.4 =
+* Number of logos to be displayed in iPad - Fixed
 
 = 1.4.3
 * Conflict with other slider plugins - Fixed
